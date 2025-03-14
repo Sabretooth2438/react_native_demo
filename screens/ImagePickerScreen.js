@@ -1,49 +1,70 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, Button, Image, StyleSheet } from 'react-native'
+import { View, Text, Button, Image, StyleSheet, Alert } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 
 const ImagePickerScreen = () => {
   const [imageUri, setImageUri] = useState(null)
+  const [cameraPermission, setCameraPermission] = useState(null)
+  const [libraryPermission, setLibraryPermission] = useState(null)
+  const [errorMsg, setErrorMsg] = useState(null)
 
   useEffect(() => {
-    // Request permissions on mount (both camera and media library)
     ;(async () => {
-      const { status } = await ImagePicker.requestCameraPermissionsAsync()
-      // For iOS 10+, also request media library permissions:
-      const { status: mediaStatus } =
-        await ImagePicker.requestMediaLibraryPermissionsAsync()
-      // In a real app, you’d handle the case where they’re not granted.
+      try {
+        const { status: camStatus } =
+          await ImagePicker.requestCameraPermissionsAsync()
+        setCameraPermission(camStatus)
+        const { status: libStatus } =
+          await ImagePicker.requestMediaLibraryPermissionsAsync()
+        setLibraryPermission(libStatus)
+      } catch {
+        setErrorMsg('Could not request permissions.')
+      }
     })()
   }, [])
 
   const handlePickImage = async () => {
-    // Launch the OS’s image library.
-    const result = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      quality: 1,
-    })
-    if (!result.canceled) {
-      // In older versions of expo-image-picker, the key might be `uri` instead of `assets[0].uri`
-      const uri = result.assets?.[0].uri
-      setImageUri(uri)
+    if (libraryPermission !== 'granted') {
+      Alert.alert('Permission Required', 'Please allow media library access.')
+      return
+    }
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,
+        quality: 1,
+      })
+      if (!result.canceled) {
+        const uri = result.assets?.[0].uri
+        setImageUri(uri)
+      }
+    } catch {
+      setErrorMsg('Something went wrong picking an image.')
     }
   }
 
   const handleTakePhoto = async () => {
-    // Launch the OS’s camera.
-    const result = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      quality: 1,
-    })
-    if (!result.canceled) {
-      const uri = result.assets?.[0].uri
-      setImageUri(uri)
+    if (cameraPermission !== 'granted') {
+      Alert.alert('Permission Required', 'Please allow camera access.')
+      return
+    }
+    try {
+      const result = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        quality: 1,
+      })
+      if (!result.canceled) {
+        const uri = result.assets?.[0].uri
+        setImageUri(uri)
+      }
+    } catch {
+      setErrorMsg('Something went wrong taking a photo.')
     }
   }
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Pick or Take a Photo</Text>
+      {errorMsg && <Text style={styles.error}>{errorMsg}</Text>}
       {imageUri ? (
         <>
           <Image source={{ uri: imageUri }} style={styles.image} />
@@ -72,6 +93,10 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  error: {
+    color: 'red',
+    marginVertical: 8,
   },
   image: {
     width: 300,
