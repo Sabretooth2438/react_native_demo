@@ -1,8 +1,8 @@
 import React from 'react'
 import { createDrawerNavigator } from '@react-navigation/drawer'
 import TabNavigator from './TabNavigator'
-import CameraScreen from './CameraScreen'
-import LocationScreen from './LocationScreen'
+import ProfileScreen from '../screens/ProfileScreen'
+import SettingsScreen from '../screens/SettingsScreen'
 
 const Drawer = createDrawerNavigator()
 
@@ -10,8 +10,8 @@ const DrawerNavigator = () => {
   return (
     <Drawer.Navigator>
       <Drawer.Screen name="Tabs" component={TabNavigator} />
-      <Drawer.Screen name="Camera" component={CameraScreen} />
-      <Drawer.Screen name="Location" component={LocationScreen} />
+      <Drawer.Screen  name="Profile" component={ProfileScreen} />
+      <Drawer.Screen  name="Settings" component={SettingsScreen} />
     </Drawer.Navigator>
   )
 }

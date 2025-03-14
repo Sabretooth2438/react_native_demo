@@ -9,12 +9,12 @@ const ProfileScreen = () => {
   )
 }
 
+export default ProfileScreen
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
   },
 })
-
-export default ProfileScreen

@@ -1,19 +1,20 @@
 import React from 'react'
-import { createDrawerNavigator } from '@react-navigation/drawer'
-import TabNavigator from './TabNavigator'
-import CameraScreen from './CameraScreen'
-import LocationScreen from './LocationScreen'
+import { View, Text, StyleSheet } from 'react-native'
 
-const Drawer = createDrawerNavigator()
-
-const DrawerNavigator = () => {
+const HomeScreen = () => {
   return (
-    <Drawer.Navigator>
-      <Drawer.Screen name="Tabs" component={TabNavigator} />
-      <Drawer.Screen name="Camera" component={CameraScreen} />
-      <Drawer.Screen name="Location" component={LocationScreen} />
-    </Drawer.Navigator>
+    <View style={styles.container}>
+      <Text>Home Screen</Text>
+    </View>
   )
 }
 
-export default DrawerNavigator
+export default HomeScreen
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+})
